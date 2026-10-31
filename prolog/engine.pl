@@ -12,7 +12,8 @@
             specificity/2,
             rank/3,
             score/4,
-            confidence_band/2
+            confidence_band/2,
+            next_question/3
           ]).
 :- use_module(library(lists)).
 :- use_module(library(apply)).
@@ -45,7 +46,7 @@ score(evidence(Present0, Absent0), D, Score, detail(Matched, Denied, CF, Coverag
     list_to_set(Absent0, Absent),
     disease(D, _),
     findall(S-W,
-            ( member(S, Present), presents(D, S), specificity(S, W) ),
+            (member(S, Present), presents(D, S), specificity(S, W)),
             Matched),
     Matched \== [],
     pairs_values(Matched, Ws),
@@ -56,7 +57,7 @@ score(evidence(Present0, Absent0), D, Score, detail(Matched, Denied, CF, Coverag
     Coverage is NM / NAll,
     param(coverage_mix, L),
     CovFactor is 1 - L + L * Coverage,
-    findall(S, ( member(S, Absent), presents(D, S) ), Denied),
+    findall(S, (member(S, Absent), presents(D, S)), Denied),
     length(Denied, ND),
     param(deny_penalty, Pen),
     Score is CF * CovFactor * Pen ** ND.
@@ -88,3 +89,25 @@ confidence_band(Score, Band) :-
     ;   Band = low
     ).
 
+next_question(evidence(Present, Absent), Symptom, split(Have, K)) :-
+    param(question_pool, Pool),
+    rank(evidence(Present, Absent), Pool, Top),
+    length(Top, K),
+    K > 1,
+    findall(S,
+            (member(r(_, D, _), Top),
+              presents(D, S),
+              \+ memberchk(S, Present),
+              \+ memberchk(S, Absent)),
+            All),
+    sort(All, Candidates),
+    findall(q(Key, W, S, C),
+            (member(S, Candidates),
+              aggregate_all(count,
+                            (member(r(_, D1, _), Top), presents(D1, S)),
+                            C),
+              Key is min(C, K - C),
+              specificity(S, W)),
+            Scored),
+    sort(0, @>=, Scored, [q(Key, _, Symptom, Have) | _]),
+    Key > 0.

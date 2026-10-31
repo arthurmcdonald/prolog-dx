@@ -52,7 +52,7 @@ store(symptom(I, N), _)   :- !, assertz(symptom(I, N)).
 store(kb_meta(K, V), _)   :- !, assertz(kb_meta(K, V)).
 store(presents(D, S), _)  :-
     !,
-    (   presents(D, S) -> true ; assertz(presents(D, S)) ).
+    (presents(D, S) -> true ; assertz(presents(D, S))).
 store(Other, File) :-
     print_message(warning, format("~w: ignoring ~q", [File, Other])).
 
