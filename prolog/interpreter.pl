@@ -43,3 +43,27 @@ proof_leaves(fact(G), [G]) :- !.
 proof_leaves(not(G), [not(G)]) :- !.
 proof_leaves(rule(_, B), L) :-
     proof_leaves(B, L).
+
+%   Indented, human-readable rendering of a proof tree.
+proof_text(Proof, Text) :-
+    with_output_to(string(Text), print_proof(Proof, 0)).
+
+print_proof(true, _) :- !.
+print_proof((A, B), D) :- !,
+    print_proof(A, D),
+    print_proof(B, D).
+print_proof(fact(G), D) :- !,
+    indent(D),
+    format("~q~n", [G]).
+print_proof(not(G), D) :- !,
+    indent(D),
+    format("\\+ ~q~n", [G]).
+print_proof(rule(G, B), D) :-
+    indent(D),
+    format("~q~n", [G]),
+    D1 is D + 1,
+    print_proof(B, D1).
+
+indent(D) :-
+    N is D * 2,
+    format("~*c", [N, 32]).
