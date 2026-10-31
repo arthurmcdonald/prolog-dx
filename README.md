@@ -7,4 +7,4 @@ with explainable answers and a small JSON HTTP API.
 
 ## Status
 
-Work in progress. See the commit history for how it is being built up.
+Work in progress.
