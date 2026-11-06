@@ -1,7 +1,7 @@
 SWIPL ?= swipl
 PORT  ?= 8080
 
-.PHONY: run run-fake data docker
+.PHONY: run run-fake data smoke docker
 
 run-fake:
 	$(SWIPL) server.pl --port=$(PORT) --kb=data/toy/toy_kb.pl
@@ -18,3 +18,10 @@ run: data/kb/hetionet_kb.pl
 
 data/kb/hetionet_kb.pl:
 	$(MAKE) data
+
+smoke: ## with the server running: hit each endpoint
+	curl -s localhost:$(PORT)/api/health; echo
+	curl -s 'localhost:$(PORT)/api/symptoms?q=fev'; echo
+	curl -s -X POST localhost:$(PORT)/api/diagnose \
+	  -H 'content-type: application/json' \
+	  -d '{"present":["fever","cough","sore throat"],"absent":["headache"],"limit":3}'; echo
