@@ -106,6 +106,11 @@ Symptoms may be names (case-insensitive) or ids. The response contains `candidat
 - Red-flag rules match on symptom **names**. After building the real KB, check that the names in `rules.pl` exist there (MeSH wording can differ from the seed, e.g. for "stiff neck") with `grep` on `data/kb/hetionet_kb.pl`.
 - No age, sex, duration or risk-factor modelling.
 
+## TODO
+
+- Add tests using plunit
+- Create frontend web GUI
+
 ## License
 
 MIT for the code. Hetionet data is CC0.
