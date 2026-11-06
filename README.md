@@ -70,8 +70,7 @@ For each disease *D* and the reported symptoms that *D* presents:
 3. **Coverage:** scale by `0.5 + 0.5 · matched/|symptoms(D)|` so diseases whose whole picture is explained by ones that match by chance
 4. **Denials:** each explicitly denied symptom of *D* multiplies the score by 0.7
 
-All constants are `engine:param/2` facts. `tests/scoring_replica.py` is an independent Python
-implementation used to derive the expected values in the Prolog tests.
+All constants are `engine:param/2` facts.
 
 ### Expert rules and explanations
 
